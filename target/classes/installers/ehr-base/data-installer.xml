@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="20211019005923-01" author="mattae">
+        <loadData encoding="UTF-8"
+                  file="installers/ehrbase/specialty.csv"
+                  separator=";"
+                  tableName="value_set"/>
+    </changeSet>
+
+    <changeSet id="20211019005923-02" author="mattae">
+        <loadData encoding="UTF-8"
+                  file="installers/ehrbase/pathology_category.csv"
+                  separator=";"
+                  tableName="pathology_category"/>
+
+        <loadData encoding="UTF-8"
+                  file="installers/ehrbase/pathology_group.csv"
+                  separator=";"
+                  tableName="pathology_group"/>
+    </changeSet>
+
+    <changeSet id="20211019005923-03" author="mattae">
+        <loadData encoding="UTF-8"
+                  file="installers/ehrbase/pathology.csv"
+                  separator=";"
+                  tableName="pathology"/>
+
+        <loadData encoding="UTF-8"
+                  file="installers/ehrbase/pathology_2.csv"
+                  separator=";"
+                  tableName="pathology"/>
+    </changeSet>
+
+    <changeSet id="20211019005923-04" author="mattae">
+        <loadData encoding="UTF-8"
+                  file="installers/ehrbase/icd9_proc.csv"
+                  separator=";"
+                  tableName="procedure_code"/>
+
+        <loadData encoding="UTF-8"
+                  file="installers/ehrbase/icd10_pcs_1.csv"
+                  separator=";"
+                  tableName="procedure_code"/>
+        <loadData encoding="UTF-8"
+                  file="installers/ehrbase/icd10_pcs_2.csv"
+                  separator=";"
+                  tableName="procedure_code"/>
+        <loadData encoding="UTF-8"
+                  file="installers/ehrbase/icd10_pcs_3.csv"
+                  separator=";"
+                  tableName="procedure_code"/>
+        <loadData encoding="UTF-8"
+                  file="installers/ehrbase/icpm_proc.csv"
+                  separator=";"
+                  tableName="procedure_code"/>
+    </changeSet>
+
+
+    <!--<changeSet id="20211019005923-06" author="mattae">
+        <loadData encoding="UTF-8"
+                  file="installers/ehrbase/medicament_category.csv"
+                  separator=";"
+                  tableName="medicament_category"/>
+
+        <loadData encoding="UTF-8"
+                  file="installers/ehrbase/essential_medicament.csv"
+                  separator=","
+                  tableName="medicament"/>
+
+        <loadData encoding="UTF-8"
+                  file="installers/ehrbase/dosage.csv"
+                  separator=";"
+                  tableName="medication_dosage"/>
+    </changeSet>-->
+</databaseChangeLog>

@@ -1,0 +1,1135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <property name="autoIncrement" value="true"/>
+    <changeSet id="20211019005923-01" author="mattae">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="patient"/>
+            </not>
+        </preConditions>
+        <createTable tableName="patient">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="active" type="boolean" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="marital_status" type="varchar(32)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="blood_type" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="rhesus" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="hb" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="critical_info" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="general_info" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="education" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="occupation" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="person_id" type="uuid">
+                <constraints nullable="false" unique="true" uniqueConstraintName="ux_patient_person_id"/>
+            </column>
+
+            <column name="organisation_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="patient" baseColumnNames="person_id"
+                                 constraintName="fk_patient_person_id" referencedTableName="person"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="patient" baseColumnNames="organisation_id"
+                                 constraintName="fk_patient_organisation_id" referencedTableName="organisation"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="20211019005923-02" author="mattae">
+        <createTable tableName="related_persons">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="patient_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="person_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="relationship" type="varchar(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="related_persons" baseColumnNames="patient_id"
+                                 constraintName="fk_patient_related_persons_patient_id" referencedTableName="patient"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="related_persons" baseColumnNames="person_id"
+                                 constraintName="fk_patient_related_persons_person_id"
+                                 referencedTableName="person"
+                                 referencedColumnNames="id"/>
+
+        <addUniqueConstraint tableName="related_persons" columnNames="patient_id,person_id"/>
+    </changeSet>
+
+    <changeSet id="20211019005923-03" author="mattae">
+        <createTable tableName="service">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(128)">
+                <constraints nullable="false" />
+            </column>
+            <column name="active" type="boolean" defaultValueComputed="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="text">
+                <constraints nullable="true"/>
+            </column>
+            <column name="organisation_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="service" baseColumnNames="organisation_id"
+                                 constraintName="fk_service_organisation_id" referencedTableName="organisation"
+                                 referencedColumnNames="id"/>
+
+        <sql>
+            create unique index idx_service_archived on service(name) where archived = false
+        </sql>
+
+        <createTable tableName="service_enrollment">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="patient_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organisation_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="service_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data" type="jsonb">
+                <constraints nullable="false"/>
+            </column>
+            <column name="conclusion_data" type="jsonb">
+                <constraints nullable="true"/>
+            </column>
+            <column name="start" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end" type="timestamp"/>
+            <column name="identifier_type" type="varchar(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="identifier_value" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="service_enrollment" baseColumnNames="patient_id"
+                                 constraintName="fk_service_enrollment_patient_id" referencedTableName="patient"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="service_enrollment" baseColumnNames="organisation_id"
+                                 constraintName="fk_service_enrollment_organisation_id"
+                                 referencedTableName="organisation"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="service_enrollment" baseColumnNames="service_id"
+                                 constraintName="fk_service_enrollment_service_id" referencedTableName="service"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="20211019005923-04" author="mattae">
+        <createTable tableName="participant">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="role" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="person_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="participant" baseColumnNames="person_id"
+                                 constraintName="fk_participant_person_id" referencedTableName="person"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="20211019005923-05" author="mattae">
+        <createTable tableName="appointment">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="status" type="varchar(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cancellation_reason" type="varchar(64)"/>
+            <column name="service_type" type="varchar(64)"/>
+            <column name="service_category" type="varchar(64)"/>
+            <column name="appointment_type" type="varchar(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="varchar(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="text"/>
+            <column name="comment" type="text"/>
+            <column name="start" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end" type="timestamp"/>
+            <column name="patient_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organisation_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="appointment_participants">
+            <column name="appointment_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="participant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="appointment" baseColumnNames="patient_id"
+                                 constraintName="fk_appointment_patient_id" referencedTableName="patient"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="appointment" baseColumnNames="organisation_id"
+                                 constraintName="fk_appointment_organisation_id" referencedTableName="organisation"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="appointment_participants" baseColumnNames="participant_id"
+                                 constraintName="fk_appointment_participants_participant_id"
+                                 referencedTableName="participant"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="appointment_participants" baseColumnNames="appointment_id"
+                                 constraintName="fk_appointment_participants_appointment_id"
+                                 referencedTableName="appointment"
+                                 referencedColumnNames="id"/>
+        <addPrimaryKey tableName="appointment_participants" columnNames="appointment_id,participant_id"/>
+    </changeSet>
+
+    <changeSet id="20211019005923-07" author="mattae">
+        <createTable tableName="referenced_data">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="reference_key" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data" type="jsonb">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organisation_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="organisation_id" baseTableName="referenced_data"
+                                 constraintName="fk_referenced_data_organisation_id"
+                                 referencedTableName="organisation" referencedColumnNames="id"/>
+
+        <addUniqueConstraint tableName="referenced_data" columnNames="reference_key,type"/>
+
+        <createIndex tableName="referenced_data" indexName="idx_referenced_data_id_org">
+            <column name="archived"/>
+            <column name="id"/>
+            <column name="organisation_id"/>
+        </createIndex>
+
+        <createIndex tableName="referenced_data" indexName="idx_referenced_data_reference_key_type_org">
+            <column name="archived"/>
+            <column name="reference_key"/>
+            <column name="type"/>
+            <column name="organisation_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="20211019005923-09" author="mattae">
+        <createTable tableName="pathology_category">
+            <column name="id" type="serial" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="parent_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="pathology_category"
+                                 constraintName="fk_pathology_category_parent_id" referencedColumnNames="id"
+                                 referencedTableName="pathology_category"/>
+    </changeSet>
+
+    <changeSet id="20211019005923-10" author="mattae">
+        <createTable tableName="pathology_group">
+            <column name="id" type="serial" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="description" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="info" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20211019005923-11" author="mattae">
+        <createTable tableName="pathology">
+            <column name="id" type="serial" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="uri" type="varchar(512)"/>
+            <column name="chromosome" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="gene" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="protein" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="active" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+            <column name="info" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="category_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="group_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="pathology"
+                                 constraintName="fk_pathology_category_id" referencedColumnNames="id"
+                                 referencedTableName="pathology_category"/>
+        <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="pathology"
+                                 constraintName="fk_pathology_group_id"
+                                 referencedColumnNames="id" referencedTableName="pathology_group"/>
+    </changeSet>
+
+    <changeSet id="20211019005923-12" author="mattae">
+        <createTable tableName="procedure_code">
+            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="description" type="varchar(512)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20211019005923-13-1" author="mattae">
+        <createTable tableName="health_professional">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="specialty" type="varchar(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="info" type="varchar(512)"/>
+            <column name="person_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="active" type="boolean" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="health_professional" baseColumnNames="person_id"
+                                 constraintName="fk_health_professional_person_id" referencedTableName="person"
+                                 referencedColumnNames="id"/>
+
+        <createTable tableName="health_professional_specialties">
+            <column name="professional_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="specialty" type="varchar(256)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="last_modified_date" type="timestamp" defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="health_professional_specialties" baseColumnNames="professional_id"
+                                 constraintName="fk_health_professional_specialties_professional_id"
+                                 referencedTableName="health_professional"
+                                 referencedColumnNames="id"/>
+
+        <addUniqueConstraint tableName="health_professional_specialties" columnNames="professional_id,specialty"/>
+    </changeSet>
+
+    <changeSet id="20211019005923-13" author="mattae">
+        <createTable tableName="disease">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="on_treatment" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+            <column name="infectious" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+            <column name="remark" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="diagnosed_date" type="date">
+                <constraints nullable="true"/>
+            </column>
+            <column name="heal_date" type="date">
+                <constraints nullable="true"/>
+            </column>
+            <column name="active" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+            <column name="age_at_diagnosis" type="integer">
+                <constraints nullable="true"/>
+            </column>
+            <column name="pregnancy_warning" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+            <column name="week_of_pregnancy" type="integer">
+                <constraints nullable="true"/>
+            </column>
+            <column name="allergy" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+            <column name="allergy_type" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="extra_info" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="treatment_description" type="varchar(512)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="treatment_start" type="date">
+                <constraints nullable="true"/>
+            </column>
+            <column name="treatment_stop" type="date">
+                <constraints nullable="true"/>
+            </column>
+            <column name="status" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="severity" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="procedure_code_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="patient_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="health_professional_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20190320155353-2" author="mattae">
+        <addForeignKeyConstraint baseColumnNames="procedure_code_id" baseTableName="disease"
+                                 constraintName="fk_disease_procedure_code_id" referencedColumnNames="id"
+                                 referencedTableName="procedure_code"/>
+        <addForeignKeyConstraint baseColumnNames="patient_id" baseTableName="disease"
+                                 constraintName="fk_disease_patient_id"
+                                 referencedColumnNames="id" referencedTableName="patient"/>
+        <addForeignKeyConstraint baseColumnNames="health_professional_id" baseTableName="disease"
+                                 constraintName="fk_disease_professional_id" referencedColumnNames="id"
+                                 referencedTableName="health_professional"/>
+    </changeSet>
+
+    <changeSet id="20211019005923-23" author="mattae">
+        <createTable tableName="encounter">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="start_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="timestamp"/>
+            <column name="type" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="service_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+            <column name="patient_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organisation_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="part_of_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="encounter_participants">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="encounter_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="participant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp" defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="encounter_participants" columnNames="encounter_id, participant_id"/>
+
+        <addForeignKeyConstraint baseTableName="encounter_participants" baseColumnNames="encounter_id"
+                                 constraintName="fk_encounter_participants_encounter_id" referencedTableName="encounter"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="encounter_participants" baseColumnNames="participant_id"
+                                 constraintName="fk_encounter_participants_participant_id" referencedTableName="participant"
+                                 referencedColumnNames="id"/>
+
+        <createTable tableName="encounter_reasons">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="encounter_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pathology_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp" defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="encounter_reasons" columnNames="encounter_id, pathology_id"/>
+
+        <addForeignKeyConstraint baseTableName="encounter_reasons" baseColumnNames="encounter_id"
+                                 constraintName="fk_encounter_reasons_encounter_id" referencedTableName="encounter"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="encounter_reasons" baseColumnNames="pathology_id"
+                                 constraintName="fk_encounter_reasons_pathology_id" referencedTableName="pathology"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="20211019005923-24" author="mattae">
+
+        <createTable tableName="evaluation">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="mood" type="varchar(32)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="abstraction" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+            <column name="calculation_ability" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+            <column name="chief_complaint" type="varchar(1024)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="complaint_notes" type="varchar(1024)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="directions" type="varchar(512)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="discharge_reason" type="varchar(256)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="notes" type="varchar(1024)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="presumptive_diagnosis" type="varchar(1024)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="psychological_assessment" type="varchar(1024)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="end_date" type="timestamp"/>
+            <column name="start_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="evaluation_summary" type="varchar(1024)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="evaluation_type" type="varchar(32)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="eyes_loc" type="varchar(32)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="information_source" type="varchar(32)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="judgement" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+            <column name="awareness" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+            <column name="level_of_consciousness" type="integer">
+                <constraints nullable="true"/>
+            </column>
+            <column name="memory_loss" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+            <column name="violent" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+            <column name="praxis" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+            <column name="present_illness" type="varchar(1024)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="tremor" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+            <column name="vocabulary" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+            <column name="disoriented" type="boolean"/>
+            <column name="status" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="diagnosis_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="encounter_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organisation_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="patient_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="signed_by_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+            <column name="health_professional_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+            <column name="appointment_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+            <column name="next_appointment_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="evaluation" baseColumnNames="appointment_id"
+                                 constraintName="fk_evaluation_appointment_id" referencedTableName="appointment"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="evaluation" baseColumnNames="next_appointment_id"
+                                 constraintName="fk_evaluation_next_appointment_id" referencedTableName="appointment"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="evaluation" baseColumnNames="health_professional_id"
+                                 constraintName="fk_evaluation_health_professional_id"
+                                 referencedTableName="health_professional"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="evaluation" baseColumnNames="signed_by_id"
+                                 constraintName="fk_evaluation_signed_by_id" referencedTableName="health_professional"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="evaluation" baseColumnNames="patient_id"
+                                 constraintName="fk_evaluation_patient_id" referencedTableName="patient"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="evaluation" baseColumnNames="encounter_id"
+                                 constraintName="fk_evaluation_encounter_id" referencedTableName="encounter"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="evaluation" baseColumnNames="organisation_id"
+                                 constraintName="fk_evaluation_organisation_id" referencedTableName="organisation"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="evaluation" baseColumnNames="diagnosis_id"
+                                 constraintName="fk_evaluation_diagnosis_id" referencedTableName="pathology"
+                                 referencedColumnNames="id"/>
+
+        <addUniqueConstraint tableName="evaluation" columnNames="patient_id,encounter_id"/>
+
+        <createTable tableName="evaluation_findings">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="comment" type="varchar(512)"/>
+            <column name="pathology_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="evaluation_signs_and_symptoms_id" type="UUID"/>
+            <column name="evaluation_secondary_conditions_id" type="UUID"/>
+            <column name="evaluation_diagnostic_hypotheses_id" type="UUID"/>
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="evaluation_findings" baseColumnNames="evaluation_signs_and_symptoms_id"
+                                 constraintName="fk_evaluation_findings_evaluation_signs_and_symptoms_id"
+                                 referencedTableName="evaluation" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="evaluation_findings" baseColumnNames="evaluation_secondary_conditions_id"
+                                 constraintName="fk_evaluation_findings_evaluation_secondary_conditions_id"
+                                 referencedTableName="evaluation" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="evaluation_findings" baseColumnNames="evaluation_diagnostic_hypotheses_id"
+                                 constraintName="fk_evaluation_findings_evaluation_diagnostic_hypotheses_id"
+                                 referencedTableName="evaluation" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="evaluation_findings" baseColumnNames="pathology_id"
+                                 constraintName="fk_evaluation_pathology_id"
+                                 referencedTableName="pathology" referencedColumnNames="id"/>
+
+        <createTable tableName="evaluation_direction">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="comment" type="varchar(512)"/>
+            <column name="procedure_code_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="evaluation_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="evaluation_direction" baseColumnNames="evaluation_id"
+                                 constraintName="fk_evaluation_direction_evaluation_id"
+                                 referencedTableName="evaluation" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="evaluation_direction" baseColumnNames="procedure_code_id"
+                                 constraintName="fk_evaluation_procedure_code_id"
+                                 referencedTableName="procedure_code" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="20211019005923-25" author="mattae">
+        <createTable tableName="encounter_observation">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="patient_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="encounter_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organisation_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data" type="jsonb">
+                <constraints nullable="false"/>
+            </column>
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20211019005923-26" author="mattae">
+        <createTable tableName="ehr_product_category">
+            <column name="id" type="serial" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(512)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parent_id" type="bigint"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="ehr_product_category" baseColumnNames="parent_id"
+                                 constraintName="fk_product_category_parent_id"
+                                 referencedTableName="ehr_product_category"
+                                 referencedColumnNames="id"/>
+
+        <createTable tableName="ehr_product">
+            <column name="id" type="serial" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(512)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="list_price" type="decimal(10,2)"/>
+            <column name="cost_price" type="decimal(10,2)"/>
+            <column name="type" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category_id" type="bigint"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="ehr_product" baseColumnNames="category_id"
+                                 constraintName="fk_product_category_id" referencedTableName="ehr_product_category"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="20211019005923-27" author="mattae">
+        <createTable tableName="vital_signs">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="patient_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="encounter_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organisation_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="hip_circumference" type="float">
+                <constraints nullable="true"/>
+            </column>
+            <column name="height" type="float">
+                <constraints nullable="true"/>
+            </column>
+            <column name="bmi" type="float">
+                <constraints nullable="true"/>
+            </column>
+            <column name="abdominal_circumference" type="float">
+                <constraints nullable="true"/>
+            </column>
+            <column name="weight" type="float">
+                <constraints nullable="true"/>
+            </column>
+            <column name="diastolic" type="integer">
+                <constraints nullable="true"/>
+            </column>
+            <column name="heart_rate" type="integer">
+                <constraints nullable="true"/>
+            </column>
+            <column name="respiratory_rate" type="integer">
+                <constraints nullable="true"/>
+            </column>
+            <column name="systolic" type="integer">
+                <constraints nullable="true"/>
+            </column>
+            <column name="waist_to_hip_ratio" type="float">
+                <constraints nullable="true"/>
+            </column>
+            <column name="temperature" type="float">
+                <constraints nullable="true"/>
+            </column>
+            <column name="oxygen_saturation" type="integer">
+                <constraints nullable="true"/>
+            </column>
+            <column name="archived" type="boolean" defaultValueComputed="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="vital_signs" baseColumnNames="patient_id"
+                                 constraintName="fk_vital_signs_patient_id" referencedTableName="patient"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="vital_signs" baseColumnNames="encounter_id"
+                                 constraintName="fk_vital_signs_encounter_id" referencedTableName="encounter"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="vital_signs" baseColumnNames="organisation_id"
+                                 constraintName="fk_vital_signs_organisation_id" referencedTableName="organisation"
+                                 referencedColumnNames="id"/>
+
+        <addUniqueConstraint tableName="vital_signs" columnNames="patient_id,encounter_id"/>
+    </changeSet>
+</databaseChangeLog>
