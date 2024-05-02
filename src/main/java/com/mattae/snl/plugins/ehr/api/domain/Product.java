@@ -1,6 +1,9 @@
 package com.mattae.snl.plugins.ehr.api.domain;
 
-import com.blazebit.persistence.view.*;
+import com.blazebit.persistence.view.CreatableEntityView;
+import com.blazebit.persistence.view.EntityView;
+import com.blazebit.persistence.view.IdMapping;
+import com.blazebit.persistence.view.UpdatableEntityView;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
@@ -57,10 +60,9 @@ public class Product {
 
         void setType(String type);
 
-        @UpdatableMapping
-        ProductCategory.UpdateView getCategory();
+        ProductCategory.IdView getCategory();
 
-        void setCategory(ProductCategory.UpdateView category);
+        void setCategory(ProductCategory.IdView category);
     }
 
     @EntityView(Product.class)
