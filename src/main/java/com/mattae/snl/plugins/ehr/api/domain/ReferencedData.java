@@ -9,24 +9,27 @@ import io.github.jbella.snl.core.api.domain.AuditableEntity;
 import io.github.jbella.snl.core.api.domain.AuditableView;
 import io.github.jbella.snl.core.api.domain.Organisation;
 import io.github.jbella.snl.core.api.id.UUIDV7;
-import io.hypersistence.utils.hibernate.type.json.JsonNodeBinaryType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.type.SqlTypes;
 
 import java.util.UUID;
 
-@Entity
+@Entity(name = "EHRReferencedData")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
-@Data
-@SQLDelete(sql = "update referenced_data set archived = true, last_modified_date = current_timestamp where id = ?",
-    check = ResultCheckStyle.COUNT)
-@Where(clause = "archived = false")
+@Getter
+@Setter
+@Table(name = "ehr_referenced_data")
+@SQLDelete(sql = "update ehr_referenced_data set archived = true, last_modified_date = current_timestamp where id = ?",
+        check = ResultCheckStyle.COUNT)
+@SQLRestriction("archived = false")
 public class ReferencedData extends AuditableEntity {
     @Id
     @UUIDV7
@@ -35,7 +38,7 @@ public class ReferencedData extends AuditableEntity {
     @NotNull
     private UUID referenceKey;
 
-    @Type(JsonNodeBinaryType.class)
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     @NotNull
     private JsonNode data;
@@ -75,6 +78,10 @@ public class ReferencedData extends AuditableEntity {
     @EntityView(ReferencedData.class)
     @UpdatableEntityView
     public interface UpdateView extends CreateView {
+        @IdMapping
+        @NotNull
+        UUID getId();
+
         void setId(UUID id);
     }
 }

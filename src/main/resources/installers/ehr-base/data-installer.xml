@@ -8,55 +8,55 @@
         <loadData encoding="UTF-8"
                   file="installers/ehrbase/specialty.csv"
                   separator=";"
-                  tableName="value_set"/>
+                  tableName="fw_value_set"/>
     </changeSet>
 
     <changeSet id="20211019005923-02" author="mattae">
         <loadData encoding="UTF-8"
                   file="installers/ehrbase/pathology_category.csv"
                   separator=";"
-                  tableName="pathology_category"/>
+                  tableName="fw_pathology_category"/>
 
         <loadData encoding="UTF-8"
                   file="installers/ehrbase/pathology_group.csv"
                   separator=";"
-                  tableName="pathology_group"/>
+                  tableName="fw_pathology_group"/>
     </changeSet>
 
     <changeSet id="20211019005923-03" author="mattae">
         <loadData encoding="UTF-8"
                   file="installers/ehrbase/pathology.csv"
                   separator=";"
-                  tableName="pathology"/>
+                  tableName="fw_pathology"/>
 
         <loadData encoding="UTF-8"
                   file="installers/ehrbase/pathology_2.csv"
                   separator=";"
-                  tableName="pathology"/>
+                  tableName="fw_pathology"/>
     </changeSet>
 
     <changeSet id="20211019005923-04" author="mattae">
         <loadData encoding="UTF-8"
                   file="installers/ehrbase/icd9_proc.csv"
                   separator=";"
-                  tableName="procedure_code"/>
+                  tableName="fw_procedure_code"/>
 
         <loadData encoding="UTF-8"
                   file="installers/ehrbase/icd10_pcs_1.csv"
                   separator=";"
-                  tableName="procedure_code"/>
+                  tableName="fw_procedure_code"/>
         <loadData encoding="UTF-8"
                   file="installers/ehrbase/icd10_pcs_2.csv"
                   separator=";"
-                  tableName="procedure_code"/>
+                  tableName="fw_procedure_code"/>
         <loadData encoding="UTF-8"
                   file="installers/ehrbase/icd10_pcs_3.csv"
                   separator=";"
-                  tableName="procedure_code"/>
+                  tableName="fw_procedure_code"/>
         <loadData encoding="UTF-8"
                   file="installers/ehrbase/icpm_proc.csv"
                   separator=";"
-                  tableName="procedure_code"/>
+                  tableName="fw_procedure_code"/>
     </changeSet>
 
 
@@ -64,16 +64,16 @@
         <loadData encoding="UTF-8"
                   file="installers/ehrbase/medicament_category.csv"
                   separator=";"
-                  tableName="medicament_category"/>
+                  tableName="fw_medicament_category"/>
 
         <loadData encoding="UTF-8"
                   file="installers/ehrbase/essential_medicament.csv"
                   separator=","
-                  tableName="medicament"/>
+                  tableName="fw_medicament"/>
 
         <loadData encoding="UTF-8"
                   file="installers/ehrbase/dosage.csv"
                   separator=";"
-                  tableName="medication_dosage"/>
+                  tableName="fw_medication_dosage"/>
     </changeSet>-->
 </databaseChangeLog>

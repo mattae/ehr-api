@@ -4,15 +4,16 @@ import com.blazebit.persistence.view.CreatableEntityView;
 import com.blazebit.persistence.view.EntityView;
 import com.blazebit.persistence.view.IdMapping;
 import com.blazebit.persistence.view.UpdatableEntityView;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
-@Entity
+@Entity(name = "EHRProductCategory")
 @Table(name = "ehr_product_category")
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(of = "id")
 public class ProductCategory {
     @Id
@@ -47,6 +48,10 @@ public class ProductCategory {
     @EntityView(ProductCategory.class)
     @UpdatableEntityView
     public interface UpdateView extends CreateView {
+        @IdMapping
+        @NotNull
+        Long getId();
+
         void setId(Long id);
     }
 }

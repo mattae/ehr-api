@@ -11,22 +11,24 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serializable;
 import java.util.UUID;
 
-@Entity
-@Table(name = "service")
+@Entity(name = "EHRService")
+@Table(name = "ehr_service")
 @EqualsAndHashCode(of = "name", callSuper = true)
-@Data
-@SQLDelete(sql = "update service set archived = true, last_modified_date = current_timestamp where id = ?",
+@Getter
+@Setter
+@SQLDelete(sql = "update ehr_service set archived = true, last_modified_date = current_timestamp where id = ?",
         check = ResultCheckStyle.COUNT)
-@Where(clause = "archived = false")
+@SQLRestriction("archived = false")
 public class Service extends AuditableEntity implements Serializable {
 
     @Id

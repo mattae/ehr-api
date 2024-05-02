@@ -8,10 +8,10 @@
     <changeSet id="20211019005923-01" author="mattae">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="patient"/>
+                <tableExists tableName="ehr_patient"/>
             </not>
         </preConditions>
-        <createTable tableName="patient">
+        <createTable tableName="ehr_patient">
             <column name="id" type="UUID">
                 <constraints primaryKey="true"/>
             </column>
@@ -75,17 +75,17 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="patient" baseColumnNames="person_id"
-                                 constraintName="fk_patient_person_id" referencedTableName="person"
+        <addForeignKeyConstraint baseTableName="ehr_patient" baseColumnNames="person_id"
+                                 constraintName="fk_ehr_patient_person_id" referencedTableName="fw_person"
                                  referencedColumnNames="id"/>
 
-        <addForeignKeyConstraint baseTableName="patient" baseColumnNames="organisation_id"
-                                 constraintName="fk_patient_organisation_id" referencedTableName="organisation"
+        <addForeignKeyConstraint baseTableName="ehr_patient" baseColumnNames="organisation_id"
+                                 constraintName="fk_ehr_patient_organisation_id" referencedTableName="fw_organisation"
                                  referencedColumnNames="id"/>
     </changeSet>
 
     <changeSet id="20211019005923-02" author="mattae">
-        <createTable tableName="related_persons">
+        <createTable tableName="ehr_related_persons">
             <column name="id" type="UUID">
                 <constraints primaryKey="true"/>
             </column>
@@ -115,20 +115,20 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="related_persons" baseColumnNames="patient_id"
-                                 constraintName="fk_patient_related_persons_patient_id" referencedTableName="patient"
+        <addForeignKeyConstraint baseTableName="ehr_related_persons" baseColumnNames="patient_id"
+                                 constraintName="fk_ehr_patient_related_persons_patient_id" referencedTableName="ehr_patient"
                                  referencedColumnNames="id"/>
 
-        <addForeignKeyConstraint baseTableName="related_persons" baseColumnNames="person_id"
-                                 constraintName="fk_patient_related_persons_person_id"
-                                 referencedTableName="person"
+        <addForeignKeyConstraint baseTableName="ehr_related_persons" baseColumnNames="person_id"
+                                 constraintName="fk_ehr_patient_related_persons_person_id"
+                                 referencedTableName="fw_person"
                                  referencedColumnNames="id"/>
 
-        <addUniqueConstraint tableName="related_persons" columnNames="patient_id,person_id"/>
+        <addUniqueConstraint tableName="ehr_related_persons" columnNames="patient_id,person_id"/>
     </changeSet>
 
     <changeSet id="20211019005923-03" author="mattae">
-        <createTable tableName="service">
+        <createTable tableName="ehr_service">
             <column name="id" type="UUID">
                 <constraints primaryKey="true"/>
             </column>
@@ -161,15 +161,15 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="service" baseColumnNames="organisation_id"
-                                 constraintName="fk_service_organisation_id" referencedTableName="organisation"
+        <addForeignKeyConstraint baseTableName="ehr_service" baseColumnNames="organisation_id"
+                                 constraintName="fk_ehr_service_organisation_id" referencedTableName="fw_organisation"
                                  referencedColumnNames="id"/>
 
         <sql>
-            create unique index idx_service_archived on service(name) where archived = false
+            create unique index idx_service_archived on ehr_service(name) where archived = false
         </sql>
 
-        <createTable tableName="service_enrollment">
+        <createTable tableName="ehr_service_enrollment">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
@@ -215,20 +215,20 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="service_enrollment" baseColumnNames="patient_id"
-                                 constraintName="fk_service_enrollment_patient_id" referencedTableName="patient"
+        <addForeignKeyConstraint baseTableName="ehr_service_enrollment" baseColumnNames="patient_id"
+                                 constraintName="fk_ehr_service_enrollment_patient_id" referencedTableName="ehr_patient"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="service_enrollment" baseColumnNames="organisation_id"
-                                 constraintName="fk_service_enrollment_organisation_id"
-                                 referencedTableName="organisation"
+        <addForeignKeyConstraint baseTableName="ehr_service_enrollment" baseColumnNames="organisation_id"
+                                 constraintName="fk_ehr_service_enrollment_organisation_id"
+                                 referencedTableName="fw_organisation"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="service_enrollment" baseColumnNames="service_id"
-                                 constraintName="fk_service_enrollment_service_id" referencedTableName="service"
+        <addForeignKeyConstraint baseTableName="ehr_service_enrollment" baseColumnNames="service_id"
+                                 constraintName="fk_ehr_service_enrollment_service_id" referencedTableName="ehr_service"
                                  referencedColumnNames="id"/>
     </changeSet>
 
     <changeSet id="20211019005923-04" author="mattae">
-        <createTable tableName="participant">
+        <createTable tableName="ehr_participant">
             <column name="id" type="UUID">
                 <constraints primaryKey="true"/>
             </column>
@@ -255,13 +255,13 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="participant" baseColumnNames="person_id"
-                                 constraintName="fk_participant_person_id" referencedTableName="person"
+        <addForeignKeyConstraint baseTableName="ehr_participant" baseColumnNames="person_id"
+                                 constraintName="fk_ehr_participant_person_id" referencedTableName="fw_person"
                                  referencedColumnNames="id"/>
     </changeSet>
 
     <changeSet id="20211019005923-05" author="mattae">
-        <createTable tableName="appointment">
+        <createTable tableName="ehr_appointment">
             <column name="id" type="UUID">
                 <constraints primaryKey="true"/>
             </column>
@@ -306,7 +306,7 @@
             </column>
         </createTable>
 
-        <createTable tableName="appointment_participants">
+        <createTable tableName="ehr_appointment_participants">
             <column name="appointment_id" type="UUID">
                 <constraints nullable="false"/>
             </column>
@@ -322,25 +322,25 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="appointment" baseColumnNames="patient_id"
-                                 constraintName="fk_appointment_patient_id" referencedTableName="patient"
+        <addForeignKeyConstraint baseTableName="ehr_appointment" baseColumnNames="patient_id"
+                                 constraintName="fk_ehr_appointment_patient_id" referencedTableName="ehr_patient"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="appointment" baseColumnNames="organisation_id"
-                                 constraintName="fk_appointment_organisation_id" referencedTableName="organisation"
+        <addForeignKeyConstraint baseTableName="ehr_appointment" baseColumnNames="organisation_id"
+                                 constraintName="fk_ehr_appointment_organisation_id" referencedTableName="fw_organisation"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="appointment_participants" baseColumnNames="participant_id"
-                                 constraintName="fk_appointment_participants_participant_id"
-                                 referencedTableName="participant"
+        <addForeignKeyConstraint baseTableName="ehr_appointment_participants" baseColumnNames="participant_id"
+                                 constraintName="fk_ehr_appointment_participants_participant_id"
+                                 referencedTableName="ehr_participant"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="appointment_participants" baseColumnNames="appointment_id"
-                                 constraintName="fk_appointment_participants_appointment_id"
-                                 referencedTableName="appointment"
+        <addForeignKeyConstraint baseTableName="ehr_appointment_participants" baseColumnNames="appointment_id"
+                                 constraintName="fk_ehr_appointment_participants_appointment_id"
+                                 referencedTableName="ehr_appointment"
                                  referencedColumnNames="id"/>
-        <addPrimaryKey tableName="appointment_participants" columnNames="appointment_id,participant_id"/>
+        <addPrimaryKey tableName="ehr_appointment_participants" columnNames="appointment_id,participant_id"/>
     </changeSet>
 
     <changeSet id="20211019005923-07" author="mattae">
-        <createTable tableName="referenced_data">
+        <createTable tableName="ehr_referenced_data">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
@@ -373,19 +373,19 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseColumnNames="organisation_id" baseTableName="referenced_data"
-                                 constraintName="fk_referenced_data_organisation_id"
-                                 referencedTableName="organisation" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseColumnNames="organisation_id" baseTableName="ehr_referenced_data"
+                                 constraintName="fk_ehr_referenced_data_organisation_id"
+                                 referencedTableName="fw_organisation" referencedColumnNames="id"/>
 
-        <addUniqueConstraint tableName="referenced_data" columnNames="reference_key,type"/>
+        <addUniqueConstraint tableName="ehr_referenced_data" columnNames="reference_key,type"/>
 
-        <createIndex tableName="referenced_data" indexName="idx_referenced_data_id_org">
+        <createIndex tableName="ehr_referenced_data" indexName="idx_referenced_data_id_org">
             <column name="archived"/>
             <column name="id"/>
             <column name="organisation_id"/>
         </createIndex>
 
-        <createIndex tableName="referenced_data" indexName="idx_referenced_data_reference_key_type_org">
+        <createIndex tableName="ehr_referenced_data" indexName="idx_referenced_data_reference_key_type_org">
             <column name="archived"/>
             <column name="reference_key"/>
             <column name="type"/>
@@ -394,7 +394,7 @@
     </changeSet>
 
     <changeSet id="20211019005923-09" author="mattae">
-        <createTable tableName="pathology_category">
+        <createTable tableName="ehr_pathology_category">
             <column name="id" type="serial" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -406,13 +406,13 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="pathology_category"
-                                 constraintName="fk_pathology_category_parent_id" referencedColumnNames="id"
-                                 referencedTableName="pathology_category"/>
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="ehr_pathology_category"
+                                 constraintName="fk_ehr_pathology_category_parent_id" referencedColumnNames="id"
+                                 referencedTableName="ehr_pathology_category"/>
     </changeSet>
 
     <changeSet id="20211019005923-10" author="mattae">
-        <createTable tableName="pathology_group">
+        <createTable tableName="ehr_pathology_group">
             <column name="id" type="serial" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -432,7 +432,7 @@
     </changeSet>
 
     <changeSet id="20211019005923-11" author="mattae">
-        <createTable tableName="pathology">
+        <createTable tableName="ehr_pathology">
             <column name="id" type="serial" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -466,16 +466,16 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="pathology"
-                                 constraintName="fk_pathology_category_id" referencedColumnNames="id"
-                                 referencedTableName="pathology_category"/>
-        <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="pathology"
-                                 constraintName="fk_pathology_group_id"
-                                 referencedColumnNames="id" referencedTableName="pathology_group"/>
+        <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="ehr_pathology"
+                                 constraintName="fk_ehr_pathology_category_id" referencedColumnNames="id"
+                                 referencedTableName="ehr_pathology_category"/>
+        <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="ehr_pathology"
+                                 constraintName="fk_ehr_pathology_group_id"
+                                 referencedColumnNames="id" referencedTableName="ehr_pathology_group"/>
     </changeSet>
 
     <changeSet id="20211019005923-12" author="mattae">
-        <createTable tableName="procedure_code">
+        <createTable tableName="ehr_procedure_code">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -489,7 +489,7 @@
     </changeSet>
 
     <changeSet id="20211019005923-13-1" author="mattae">
-        <createTable tableName="health_professional">
+        <createTable tableName="ehr_health_professional">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
@@ -498,6 +498,9 @@
             </column>
             <column name="info" type="varchar(512)"/>
             <column name="person_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organisation_id" type="UUID">
                 <constraints nullable="false"/>
             </column>
             <column name="active" type="boolean" defaultValue="true">
@@ -520,11 +523,15 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="health_professional" baseColumnNames="person_id"
-                                 constraintName="fk_health_professional_person_id" referencedTableName="person"
+        <addForeignKeyConstraint baseTableName="ehr_health_professional" baseColumnNames="person_id"
+                                 constraintName="fk_ehr_health_professional_person_id" referencedTableName="fw_person"
                                  referencedColumnNames="id"/>
 
-        <createTable tableName="health_professional_specialties">
+        <addForeignKeyConstraint baseTableName="ehr_health_professional" baseColumnNames="organisation_id"
+                                 constraintName="fk_ehr_health_professional_organisation)id" referencedTableName="fw_organisation"
+                                 referencedColumnNames="id"/>
+
+        <createTable tableName="ehr_health_professional_specialties">
             <column name="professional_id" type="UUID">
                 <constraints nullable="false"/>
             </column>
@@ -542,16 +549,16 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="health_professional_specialties" baseColumnNames="professional_id"
-                                 constraintName="fk_health_professional_specialties_professional_id"
-                                 referencedTableName="health_professional"
+        <addForeignKeyConstraint baseTableName="ehr_health_professional_specialties" baseColumnNames="professional_id"
+                                 constraintName="fk_ehr_health_professional_specialties_professional_id"
+                                 referencedTableName="ehr_health_professional"
                                  referencedColumnNames="id"/>
 
-        <addUniqueConstraint tableName="health_professional_specialties" columnNames="professional_id,specialty"/>
+        <addUniqueConstraint tableName="ehr_health_professional_specialties" columnNames="professional_id,specialty"/>
     </changeSet>
 
     <changeSet id="20211019005923-13" author="mattae">
-        <createTable tableName="disease">
+        <createTable tableName="ehr_disease">
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -634,19 +641,19 @@
     </changeSet>
 
     <changeSet id="20190320155353-2" author="mattae">
-        <addForeignKeyConstraint baseColumnNames="procedure_code_id" baseTableName="disease"
-                                 constraintName="fk_disease_procedure_code_id" referencedColumnNames="id"
-                                 referencedTableName="procedure_code"/>
-        <addForeignKeyConstraint baseColumnNames="patient_id" baseTableName="disease"
-                                 constraintName="fk_disease_patient_id"
-                                 referencedColumnNames="id" referencedTableName="patient"/>
-        <addForeignKeyConstraint baseColumnNames="health_professional_id" baseTableName="disease"
-                                 constraintName="fk_disease_professional_id" referencedColumnNames="id"
-                                 referencedTableName="health_professional"/>
+        <addForeignKeyConstraint baseColumnNames="procedure_code_id" baseTableName="ehr_disease"
+                                 constraintName="fk_ehr_disease_procedure_code_id" referencedColumnNames="id"
+                                 referencedTableName="ehr_procedure_code"/>
+        <addForeignKeyConstraint baseColumnNames="patient_id" baseTableName="ehr_disease"
+                                 constraintName="fk_ehr_disease_patient_id"
+                                 referencedColumnNames="id" referencedTableName="ehr_patient"/>
+        <addForeignKeyConstraint baseColumnNames="health_professional_id" baseTableName="ehr_disease"
+                                 constraintName="fk_ehr_disease_professional_id" referencedColumnNames="id"
+                                 referencedTableName="ehr_health_professional"/>
     </changeSet>
 
     <changeSet id="20211019005923-23" author="mattae">
-        <createTable tableName="encounter">
+        <createTable tableName="ehr_encounter">
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -689,7 +696,7 @@
             </column>
         </createTable>
 
-        <createTable tableName="encounter_participants">
+        <createTable tableName="ehr_encounter_participants">
             <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints unique="true" nullable="false"/>
             </column>
@@ -707,17 +714,17 @@
             </column>
         </createTable>
 
-        <addUniqueConstraint tableName="encounter_participants" columnNames="encounter_id, participant_id"/>
+        <addUniqueConstraint tableName="ehr_encounter_participants" columnNames="encounter_id, participant_id"/>
 
-        <addForeignKeyConstraint baseTableName="encounter_participants" baseColumnNames="encounter_id"
-                                 constraintName="fk_encounter_participants_encounter_id" referencedTableName="encounter"
+        <addForeignKeyConstraint baseTableName="ehr_encounter_participants" baseColumnNames="encounter_id"
+                                 constraintName="fk_ehr_encounter_participants_encounter_id" referencedTableName="ehr_encounter"
                                  referencedColumnNames="id"/>
 
-        <addForeignKeyConstraint baseTableName="encounter_participants" baseColumnNames="participant_id"
-                                 constraintName="fk_encounter_participants_participant_id" referencedTableName="participant"
+        <addForeignKeyConstraint baseTableName="ehr_encounter_participants" baseColumnNames="participant_id"
+                                 constraintName="fk_ehr_encounter_participants_participant_id" referencedTableName="ehr_participant"
                                  referencedColumnNames="id"/>
 
-        <createTable tableName="encounter_reasons">
+        <createTable tableName="ehr_encounter_reasons">
             <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()">
                 <constraints unique="true" nullable="false"/>
             </column>
@@ -735,20 +742,20 @@
             </column>
         </createTable>
 
-        <addUniqueConstraint tableName="encounter_reasons" columnNames="encounter_id, pathology_id"/>
+        <addUniqueConstraint tableName="ehr_encounter_reasons" columnNames="encounter_id, pathology_id"/>
 
-        <addForeignKeyConstraint baseTableName="encounter_reasons" baseColumnNames="encounter_id"
-                                 constraintName="fk_encounter_reasons_encounter_id" referencedTableName="encounter"
+        <addForeignKeyConstraint baseTableName="ehr_encounter_reasons" baseColumnNames="encounter_id"
+                                 constraintName="fk_ehr_encounter_reasons_encounter_id" referencedTableName="ehr_encounter"
                                  referencedColumnNames="id"/>
 
-        <addForeignKeyConstraint baseTableName="encounter_reasons" baseColumnNames="pathology_id"
-                                 constraintName="fk_encounter_reasons_pathology_id" referencedTableName="pathology"
+        <addForeignKeyConstraint baseTableName="ehr_encounter_reasons" baseColumnNames="pathology_id"
+                                 constraintName="fk_ehr_encounter_reasons_pathology_id" referencedTableName="ehr_pathology"
                                  referencedColumnNames="id"/>
     </changeSet>
 
     <changeSet id="20211019005923-24" author="mattae">
 
-        <createTable tableName="evaluation">
+        <createTable tableName="ehr_evaluation">
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -870,35 +877,35 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="evaluation" baseColumnNames="appointment_id"
-                                 constraintName="fk_evaluation_appointment_id" referencedTableName="appointment"
+        <addForeignKeyConstraint baseTableName="ehr_evaluation" baseColumnNames="appointment_id"
+                                 constraintName="fk_ehr_evaluation_appointment_id" referencedTableName="ehr_appointment"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="evaluation" baseColumnNames="next_appointment_id"
-                                 constraintName="fk_evaluation_next_appointment_id" referencedTableName="appointment"
+        <addForeignKeyConstraint baseTableName="ehr_evaluation" baseColumnNames="next_appointment_id"
+                                 constraintName="fk_ehr_evaluation_next_appointment_id" referencedTableName="ehr_appointment"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="evaluation" baseColumnNames="health_professional_id"
-                                 constraintName="fk_evaluation_health_professional_id"
-                                 referencedTableName="health_professional"
+        <addForeignKeyConstraint baseTableName="ehr_evaluation" baseColumnNames="health_professional_id"
+                                 constraintName="fk_ehr_evaluation_health_professional_id"
+                                 referencedTableName="ehr_health_professional"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="evaluation" baseColumnNames="signed_by_id"
-                                 constraintName="fk_evaluation_signed_by_id" referencedTableName="health_professional"
+        <addForeignKeyConstraint baseTableName="ehr_evaluation" baseColumnNames="signed_by_id"
+                                 constraintName="fk_ehr_evaluation_signed_by_id" referencedTableName="ehr_health_professional"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="evaluation" baseColumnNames="patient_id"
-                                 constraintName="fk_evaluation_patient_id" referencedTableName="patient"
+        <addForeignKeyConstraint baseTableName="ehr_evaluation" baseColumnNames="patient_id"
+                                 constraintName="fk_ehr_evaluation_patient_id" referencedTableName="ehr_patient"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="evaluation" baseColumnNames="encounter_id"
-                                 constraintName="fk_evaluation_encounter_id" referencedTableName="encounter"
+        <addForeignKeyConstraint baseTableName="ehr_evaluation" baseColumnNames="encounter_id"
+                                 constraintName="fk_ehr_evaluation_encounter_id" referencedTableName="ehr_encounter"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="evaluation" baseColumnNames="organisation_id"
-                                 constraintName="fk_evaluation_organisation_id" referencedTableName="organisation"
+        <addForeignKeyConstraint baseTableName="ehr_evaluation" baseColumnNames="organisation_id"
+                                 constraintName="fk_ehr_evaluation_organisation_id" referencedTableName="fw_organisation"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="evaluation" baseColumnNames="diagnosis_id"
-                                 constraintName="fk_evaluation_diagnosis_id" referencedTableName="pathology"
+        <addForeignKeyConstraint baseTableName="ehr_evaluation" baseColumnNames="diagnosis_id"
+                                 constraintName="fk_ehr_evaluation_diagnosis_id" referencedTableName="ehr_pathology"
                                  referencedColumnNames="id"/>
 
-        <addUniqueConstraint tableName="evaluation" columnNames="patient_id,encounter_id"/>
+        <addUniqueConstraint tableName="ehr_evaluation" columnNames="patient_id,encounter_id"/>
 
-        <createTable tableName="evaluation_findings">
+        <createTable tableName="ehr_evaluation_findings">
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -926,23 +933,23 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="evaluation_findings" baseColumnNames="evaluation_signs_and_symptoms_id"
-                                 constraintName="fk_evaluation_findings_evaluation_signs_and_symptoms_id"
-                                 referencedTableName="evaluation" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="ehr_evaluation_findings" baseColumnNames="evaluation_signs_and_symptoms_id"
+                                 constraintName="fk_ehr_evaluation_findings_evaluation_signs_and_symptoms_id"
+                                 referencedTableName="ehr_evaluation" referencedColumnNames="id"/>
 
-        <addForeignKeyConstraint baseTableName="evaluation_findings" baseColumnNames="evaluation_secondary_conditions_id"
-                                 constraintName="fk_evaluation_findings_evaluation_secondary_conditions_id"
-                                 referencedTableName="evaluation" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="ehr_evaluation_findings" baseColumnNames="evaluation_secondary_conditions_id"
+                                 constraintName="fk_ehr_evaluation_findings_evaluation_secondary_conditions_id"
+                                 referencedTableName="ehr_evaluation" referencedColumnNames="id"/>
 
-        <addForeignKeyConstraint baseTableName="evaluation_findings" baseColumnNames="evaluation_diagnostic_hypotheses_id"
-                                 constraintName="fk_evaluation_findings_evaluation_diagnostic_hypotheses_id"
-                                 referencedTableName="evaluation" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="ehr_evaluation_findings" baseColumnNames="evaluation_diagnostic_hypotheses_id"
+                                 constraintName="fk_ehr_evaluation_findings_evaluation_diagnostic_hypotheses_id"
+                                 referencedTableName="ehr_evaluation" referencedColumnNames="id"/>
 
-        <addForeignKeyConstraint baseTableName="evaluation_findings" baseColumnNames="pathology_id"
-                                 constraintName="fk_evaluation_pathology_id"
-                                 referencedTableName="pathology" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="ehr_evaluation_findings" baseColumnNames="pathology_id"
+                                 constraintName="fk_ehr_evaluation_pathology_id"
+                                 referencedTableName="ehr_pathology" referencedColumnNames="id"/>
 
-        <createTable tableName="evaluation_direction">
+        <createTable tableName="ehr_evaluation_direction">
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -970,17 +977,17 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="evaluation_direction" baseColumnNames="evaluation_id"
-                                 constraintName="fk_evaluation_direction_evaluation_id"
-                                 referencedTableName="evaluation" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="ehr_evaluation_direction" baseColumnNames="evaluation_id"
+                                 constraintName="fk_ehr_evaluation_direction_evaluation_id"
+                                 referencedTableName="ehr_evaluation" referencedColumnNames="id"/>
 
-        <addForeignKeyConstraint baseTableName="evaluation_direction" baseColumnNames="procedure_code_id"
-                                 constraintName="fk_evaluation_procedure_code_id"
-                                 referencedTableName="procedure_code" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="ehr_evaluation_direction" baseColumnNames="procedure_code_id"
+                                 constraintName="fk_ehr_evaluation_procedure_code_id"
+                                 referencedTableName="ehr_procedure_code" referencedColumnNames="id"/>
     </changeSet>
 
     <changeSet id="20211019005923-25" author="mattae">
-        <createTable tableName="encounter_observation">
+        <createTable tableName="ehr_observation">
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -1015,6 +1022,16 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <addForeignKeyConstraint baseTableName="ehr_observation" baseColumnNames="patient_id"
+                                 constraintName="fk_ehr_observation_patient_id" referencedTableName="ehr_patient"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="ehr_observation" baseColumnNames="encounter_id"
+                                 constraintName="fk_ehr_observation_encounter_id" referencedTableName="ehr_encounter"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="ehr_observation" baseColumnNames="organisation_id"
+                                 constraintName="fk_ehr_observation_organisation_id" referencedTableName="fw_organisation"
+                                 referencedColumnNames="id"/>
     </changeSet>
 
     <changeSet id="20211019005923-26" author="mattae">
@@ -1029,7 +1046,7 @@
         </createTable>
 
         <addForeignKeyConstraint baseTableName="ehr_product_category" baseColumnNames="parent_id"
-                                 constraintName="fk_product_category_parent_id"
+                                 constraintName="fk_ehr_product_category_parent_id"
                                  referencedTableName="ehr_product_category"
                                  referencedColumnNames="id"/>
 
@@ -1049,12 +1066,12 @@
         </createTable>
 
         <addForeignKeyConstraint baseTableName="ehr_product" baseColumnNames="category_id"
-                                 constraintName="fk_product_category_id" referencedTableName="ehr_product_category"
+                                 constraintName="fk_ehr_product_category_id" referencedTableName="ehr_product_category"
                                  referencedColumnNames="id"/>
     </changeSet>
 
     <changeSet id="20211019005923-27" author="mattae">
-        <createTable tableName="vital_signs">
+        <createTable tableName="ehr_vital_signs">
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -1120,16 +1137,16 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="vital_signs" baseColumnNames="patient_id"
-                                 constraintName="fk_vital_signs_patient_id" referencedTableName="patient"
+        <addForeignKeyConstraint baseTableName="ehr_vital_signs" baseColumnNames="patient_id"
+                                 constraintName="fk_ehr_vital_signs_patient_id" referencedTableName="ehr_patient"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="vital_signs" baseColumnNames="encounter_id"
-                                 constraintName="fk_vital_signs_encounter_id" referencedTableName="encounter"
+        <addForeignKeyConstraint baseTableName="ehr_vital_signs" baseColumnNames="encounter_id"
+                                 constraintName="fk_ehr_vital_signs_encounter_id" referencedTableName="ehr_encounter"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="vital_signs" baseColumnNames="organisation_id"
-                                 constraintName="fk_vital_signs_organisation_id" referencedTableName="organisation"
+        <addForeignKeyConstraint baseTableName="ehr_vital_signs" baseColumnNames="organisation_id"
+                                 constraintName="fk_ehr_vital_signs_organisation_id" referencedTableName="fw_organisation"
                                  referencedColumnNames="id"/>
 
-        <addUniqueConstraint tableName="vital_signs" columnNames="patient_id,encounter_id"/>
+        <addUniqueConstraint tableName="ehr_vital_signs" columnNames="patient_id,encounter_id"/>
     </changeSet>
 </databaseChangeLog>

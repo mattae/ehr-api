@@ -2,18 +2,18 @@ package com.mattae.snl.plugins.ehr.api.domain;
 
 import com.blazebit.persistence.view.*;
 import com.blazebit.persistence.view.filter.ContainsIgnoreCaseFilter;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Getter
 @Setter
-@Entity
-@Table(name = "pathology")
+@Entity(name = "EHRPathology")
+@Table(name = "ehr_pathology")
 @EqualsAndHashCode(of = "name")
 public class Pathology implements Serializable {
     @Id
@@ -83,18 +83,22 @@ public class Pathology implements Serializable {
 
         void setInfo(String info);
 
-        PathologyCategory.View getCategory();
+        PathologyCategory.IdView getCategory();
 
-        void setCategory(PathologyCategory.View category);
+        void setCategory(PathologyCategory.IdView category);
 
-        PathologyGroup.View getGroup();
+        PathologyGroup.IdView getGroup();
 
-        void setGroup(PathologyGroup.View group);
+        void setGroup(PathologyGroup.IdView group);
     }
 
     @UpdatableEntityView
     @EntityView(Pathology.class)
     public interface UpdateView extends CreateView {
+        @IdMapping
+        @NotNull
+        Long getId();
+
         void setId(Long id);
     }
 }

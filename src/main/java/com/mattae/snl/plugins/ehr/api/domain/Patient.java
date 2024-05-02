@@ -3,37 +3,37 @@ package com.mattae.snl.plugins.ehr.api.domain;
 import com.blazebit.persistence.JoinType;
 import com.blazebit.persistence.SubqueryInitiator;
 import com.blazebit.persistence.view.*;
-import com.blazebit.persistence.view.PrePersist;
 import com.blazebit.persistence.view.filter.ContainsIgnoreCaseFilter;
 import com.blazebit.persistence.view.filter.EqualFilter;
 import com.mattae.snl.plugins.ehr.api.domain.enumerations.BloodType;
 import com.mattae.snl.plugins.ehr.api.domain.enumerations.HB;
 import io.github.jbella.snl.core.api.domain.*;
 import io.github.jbella.snl.core.api.id.UUIDV7;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "EHRPatient")
+@Table(name = "ehr_patient")
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
-@SQLDelete(sql = "update patient set archived = true, last_modified_date = current_timestamp where id = ?",
+@SQLDelete(sql = "update ehr_patient set archived = true, last_modified_date = current_timestamp where id = ?",
     check = ResultCheckStyle.COUNT)
-@Where(clause = "archived = false")
+@SQLRestriction("archived = false")
 @EntityListeners(AuditingEntityListener.class)
 public class Patient extends AuditableEntity implements Serializable {
     @Id

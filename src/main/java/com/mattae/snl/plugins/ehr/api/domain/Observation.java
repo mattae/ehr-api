@@ -7,28 +7,28 @@ import io.github.jbella.snl.core.api.domain.AuditableEntity;
 import io.github.jbella.snl.core.api.domain.AuditableView;
 import io.github.jbella.snl.core.api.domain.Organisation;
 import io.github.jbella.snl.core.api.id.UUIDV7;
-import io.hypersistence.utils.hibernate.type.json.JsonNodeBinaryType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.type.SqlTypes;
 
 import java.util.UUID;
 
-@Entity
-@Table(name = "encounter_observation")
+@Entity(name = "EHRObservation")
+@Table(name = "ehr_observation")
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id", callSuper = true)
-@SQLDelete(sql = "update encounter_observation set archived = true, last_modified_date = current_timestamp where id = ?",
-    check = ResultCheckStyle.COUNT)
-@Where(clause = "archived = false")
+@SQLDelete(sql = "update ehr__observation set archived = true, last_modified_date = current_timestamp where id = ?",
+        check = ResultCheckStyle.COUNT)
+@SQLRestriction("archived = false")
 @ToString(of = {"id", "encounter", "organisation"})
 public class Observation extends AuditableEntity {
     @Id
@@ -50,7 +50,7 @@ public class Observation extends AuditableEntity {
     @NotNull
     private String type;
 
-    @Type(JsonNodeBinaryType.class)
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     @NotNull
     private JsonNode data;
@@ -78,14 +78,8 @@ public class Observation extends AuditableEntity {
     }
 
     @EntityView(Observation.class)
-    @UpdatableEntityView
     @CreatableEntityView
-    public interface UpdateView extends View, AuditableView {
-        @NotNull
-        @IdMapping
-        UUID getId();
-
-        void setId(UUID id);
+    public interface CreateView extends View, AuditableView {
 
         void setType(String type);
 
@@ -98,5 +92,15 @@ public class Observation extends AuditableEntity {
         void setOrganisation(Organisation.IdView organisation);
 
         void setData(JsonNode data);
+    }
+
+    @EntityView(Observation.class)
+    @UpdatableEntityView
+    public interface UpdateView extends CreateView {
+        @NotNull
+        @IdMapping
+        UUID getId();
+
+        void setId(UUID id);
     }
 }

@@ -20,14 +20,14 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-@Entity
-@Table(name = "encounter")
+@Entity(name = "EHREncounter")
+@Table(name = "ehr_encounter")
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id", callSuper = true)
-@SQLDelete(sql = "update encounter set archived = true, last_modified_date = current_timestamp where id = ?",
+@SQLDelete(sql = "update ehr_encounter set archived = true, last_modified_date = current_timestamp where id = ?",
         check = ResultCheckStyle.COUNT)
-@Where(clause = "archived = false")
+@SQLRestriction("archived = false")
 public class Encounter extends AuditableEntity implements Serializable {
     @Id
     @UUIDV7
@@ -62,7 +62,7 @@ public class Encounter extends AuditableEntity implements Serializable {
             joinColumns = @JoinColumn(name = "encounter_id"),
             inverseJoinColumns = @JoinColumn(name = "pathology_id")
     )
-    @WhereJoinTable(clause = "archived = false")
+    @SQLJoinTableRestriction("archived = false")
     @SQLDeleteAll(sql = "update encounter_reasons set archived = true, last_modified_date = current_timestamp where id = ?",
             check = ResultCheckStyle.COUNT)
     private Set<Pathology> reason;
@@ -73,7 +73,7 @@ public class Encounter extends AuditableEntity implements Serializable {
             joinColumns = @JoinColumn(name = "encounter_id"),
             inverseJoinColumns = @JoinColumn(name = "participant_id")
     )
-    @WhereJoinTable(clause = "archived = false")
+    @SQLJoinTableRestriction("archived = false")
     @SQLDeleteAll(sql = "update encounter_participants set archived = true, last_modified_date = current_timestamp where id = ?",
             check = ResultCheckStyle.COUNT)
     private Set<Participant> participants;
@@ -131,6 +131,10 @@ public class Encounter extends AuditableEntity implements Serializable {
     @EntityView(Encounter.class)
     @UpdatableEntityView
     public interface UpdateView extends CreateView {
+        @IdMapping
+        @NotNull
+        UUID getId();
+
         void setId(UUID id);
     }
 }

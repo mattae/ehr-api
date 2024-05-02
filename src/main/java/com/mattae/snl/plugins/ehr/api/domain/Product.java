@@ -1,15 +1,16 @@
 package com.mattae.snl.plugins.ehr.api.domain;
 
 import com.blazebit.persistence.view.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
-@Entity
+@Entity(name = "EHRProduct")
 @Table(name = "ehr_product")
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(of = "id")
 public class Product {
     @Id
@@ -65,6 +66,10 @@ public class Product {
     @EntityView(Product.class)
     @UpdatableEntityView
     public interface UpdateView extends CreateView {
+        @IdMapping
+        @NotNull
+        Long getId();
+
         void setId(Long id);
     }
 }
