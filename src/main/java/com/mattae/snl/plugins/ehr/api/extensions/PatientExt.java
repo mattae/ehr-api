@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class Patient {
+public class PatientExt {
     private UUID id;
 
     private Boolean active;
