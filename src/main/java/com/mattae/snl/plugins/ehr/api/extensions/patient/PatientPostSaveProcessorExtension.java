@@ -1,8 +1,8 @@
 package com.mattae.snl.plugins.ehr.api.extensions.patient;
 
-import com.mattae.snl.plugins.ehr.api.domain.Patient;
+import com.mattae.snl.plugins.ehr.api.extensions.Patient;
 import org.pf4j.ExtensionPoint;
 
 public interface PatientPostSaveProcessorExtension extends ExtensionPoint {
-    Patient.CreateView process(Patient.CreateView patient);
+    Patient process(Patient patient);
 }
